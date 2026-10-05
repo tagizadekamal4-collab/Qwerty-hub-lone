@@ -1,5 +1,5 @@
 -- ============================================================
--- Lone Survival | QWERTY-HUB v6.5 (Full + Fancy Loading)
+-- Lone Survival | QWERTY-HUB v6.6 (Hub)
 -- ============================================================
 
 local Players = game:GetService("Players")
@@ -9,7 +9,6 @@ local Lighting = game:GetService("Lighting")
 local HttpService = game:GetService("HttpService")
 local GuiService = game:GetService("GuiService")
 local Workspace = game:GetService("Workspace")
-local TweenService = game:GetService("TweenService")
 
 local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
@@ -20,260 +19,6 @@ end
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Camera = Workspace.CurrentCamera
 local Mouse = LocalPlayer:GetMouse()
-
--- ==================== LOADING SCREEN ====================
-local loadingGui = Instance.new("ScreenGui")
-loadingGui.Name = "QWERTY_Loading"
-loadingGui.ResetOnSpawn = false
-loadingGui.IgnoreGuiInset = true
-loadingGui.DisplayOrder = 999
-loadingGui.Parent = PlayerGui
-
-local loadingBg = Instance.new("Frame")
-loadingBg.Size = UDim2.new(1, 0, 1, 0)
-loadingBg.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
-loadingBg.BorderSizePixel = 0
-loadingBg.ZIndex = 1000
-loadingBg.Parent = loadingGui
-
-local bgGrad = Instance.new("UIGradient")
-bgGrad.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 12, 25)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(25, 15, 35)),
-})
-bgGrad.Rotation = 45
-bgGrad.Parent = loadingBg
-
-local loadingLogo = Instance.new("TextLabel")
-loadingLogo.Size = UDim2.new(1, 0, 0, 60)
-loadingLogo.Position = UDim2.new(0.5, 0, 0.35, -40)
-loadingLogo.AnchorPoint = Vector2.new(0.5, 0.5)
-loadingLogo.BackgroundTransparency = 1
-loadingLogo.Text = "QWERTY-HUB"
-loadingLogo.TextColor3 = Color3.fromRGB(0, 170, 255)
-loadingLogo.TextTransparency = 1
-loadingLogo.Font = Enum.Font.GothamBlack
-loadingLogo.TextSize = 44
-loadingLogo.ZIndex = 1001
-loadingLogo.Parent = loadingBg
-
-local logoStroke = Instance.new("UIStroke", loadingLogo)
-logoStroke.Color = Color3.fromRGB(0, 170, 255)
-logoStroke.Thickness = 1
-logoStroke.Transparency = 1
-
-local loadingSub = Instance.new("TextLabel")
-loadingSub.Size = UDim2.new(1, 0, 0, 20)
-loadingSub.Position = UDim2.new(0.5, 0, 0.35, 5)
-loadingSub.AnchorPoint = Vector2.new(0.5, 0.5)
-loadingSub.BackgroundTransparency = 1
-loadingSub.Text = "LONE SURVIVAL EDITION"
-loadingSub.TextColor3 = Color3.fromRGB(180, 180, 200)
-loadingSub.TextTransparency = 1
-loadingSub.Font = Enum.Font.Gotham
-loadingSub.TextSize = 12
-loadingSub.ZIndex = 1001
-loadingSub.Parent = loadingBg
-
-local spinContainer = Instance.new("Frame")
-spinContainer.Size = UDim2.new(0, 60, 0, 60)
-spinContainer.Position = UDim2.new(0.5, 0, 0.5, 0)
-spinContainer.AnchorPoint = Vector2.new(0.5, 0.5)
-spinContainer.BackgroundTransparency = 1
-spinContainer.ZIndex = 1001
-spinContainer.Parent = loadingBg
-
-local spinRing = Instance.new("Frame")
-spinRing.Size = UDim2.new(1, 0, 1, 0)
-spinRing.BackgroundTransparency = 1
-spinRing.ZIndex = 1001
-spinRing.Parent = spinContainer
-Instance.new("UICorner", spinRing).CornerRadius = UDim.new(1, 0)
-
-local ringStroke = Instance.new("UIStroke", spinRing)
-ringStroke.Color = Color3.fromRGB(0, 170, 255)
-ringStroke.Thickness = 3
-ringStroke.Transparency = 0.2
-
-local loadingPct = Instance.new("TextLabel")
-loadingPct.Size = UDim2.new(1, 0, 0, 20)
-loadingPct.Position = UDim2.new(0.5, 0, 0.5, 50)
-loadingPct.AnchorPoint = Vector2.new(0.5, 0.5)
-loadingPct.BackgroundTransparency = 1
-loadingPct.Text = "0%"
-loadingPct.TextColor3 = Color3.fromRGB(0, 170, 255)
-loadingPct.TextTransparency = 1
-loadingPct.Font = Enum.Font.GothamBold
-loadingPct.TextSize = 14
-loadingPct.ZIndex = 1001
-loadingPct.Parent = loadingBg
-
-local loadingStatus = Instance.new("TextLabel")
-loadingStatus.Size = UDim2.new(1, 0, 0, 16)
-loadingStatus.Position = UDim2.new(0.5, 0, 0.5, 75)
-loadingStatus.AnchorPoint = Vector2.new(0.5, 0.5)
-loadingStatus.BackgroundTransparency = 1
-loadingStatus.Text = "Initializing..."
-loadingStatus.TextColor3 = Color3.fromRGB(140, 140, 160)
-loadingStatus.TextTransparency = 1
-loadingStatus.Font = Enum.Font.Gotham
-loadingStatus.TextSize = 11
-loadingStatus.ZIndex = 1001
-loadingStatus.Parent = loadingBg
-
-local loadingBarBg = Instance.new("Frame")
-loadingBarBg.Size = UDim2.new(0, 400, 0, 4)
-loadingBarBg.Position = UDim2.new(0.5, -200, 1, -60)
-loadingBarBg.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-loadingBarBg.BorderSizePixel = 0
-loadingBarBg.ZIndex = 1001
-loadingBarBg.Parent = loadingBg
-Instance.new("UICorner", loadingBarBg).CornerRadius = UDim.new(1, 0)
-
-local loadingBarFill = Instance.new("Frame")
-loadingBarFill.Size = UDim2.new(0, 0, 1, 0)
-loadingBarFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-loadingBarFill.BorderSizePixel = 0
-loadingBarFill.ZIndex = 1002
-loadingBarFill.Parent = loadingBarBg
-Instance.new("UICorner", loadingBarFill).CornerRadius = UDim.new(1, 0)
-
-local loadingVersion = Instance.new("TextLabel")
-loadingVersion.Size = UDim2.new(1, 0, 0, 16)
-loadingVersion.Position = UDim2.new(0.5, 0, 1, -30)
-loadingVersion.AnchorPoint = Vector2.new(0.5, 0.5)
-loadingVersion.BackgroundTransparency = 1
-loadingVersion.Text = "v6.5 | RedstoneGuard"
-loadingVersion.TextColor3 = Color3.fromRGB(80, 80, 100)
-loadingVersion.TextTransparency = 1
-loadingVersion.Font = Enum.Font.Gotham
-loadingVersion.TextSize = 10
-loadingVersion.ZIndex = 1001
-loadingVersion.Parent = loadingBg
-
-local skipBtn = Instance.new("TextButton")
-skipBtn.Size = UDim2.new(0, 90, 0, 26)
-skipBtn.Position = UDim2.new(1, -110, 0, 20)
-skipBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-skipBtn.TextColor3 = Color3.fromRGB(180, 180, 200)
-skipBtn.Font = Enum.Font.GothamBold
-skipBtn.TextSize = 11
-skipBtn.Text = "SKIP"
-skipBtn.BorderSizePixel = 0
-skipBtn.ZIndex = 1001
-skipBtn.Parent = loadingBg
-Instance.new("UICorner", skipBtn).CornerRadius = UDim.new(0, 6)
-Instance.new("UIStroke", skipBtn).Color = Color3.fromRGB(60, 60, 70)
-
-local skipRequested = false
-skipBtn.MouseButton1Click:Connect(function()
-    skipRequested = true
-    skipBtn.Text = "SKIPPING..."
-end)
-
--- Fade in
-task.spawn(function()
-    task.wait(0.1)
-    TweenService:Create(loadingLogo, TweenInfo.new(0.6), { TextTransparency = 0 }):Play()
-    TweenService:Create(logoStroke, TweenInfo.new(0.6), { Transparency = 0.3 }):Play()
-    TweenService:Create(loadingSub, TweenInfo.new(0.8), { TextTransparency = 0 }):Play()
-    TweenService:Create(loadingPct, TweenInfo.new(0.6), { TextTransparency = 0 }):Play()
-    TweenService:Create(loadingStatus, TweenInfo.new(0.6), { TextTransparency = 0 }):Play()
-    TweenService:Create(loadingVersion, TweenInfo.new(0.8), { TextTransparency = 0 }):Play()
-end)
-
--- Spin ring
-task.spawn(function()
-    while loadingGui and loadingGui.Parent do
-        spinContainer.Rotation = (spinContainer.Rotation + 6) % 360
-        task.wait(0.016)
-    end
-end)
-
--- Pulse logo
-task.spawn(function()
-    while loadingGui and loadingGui.Parent do
-        TweenService:Create(loadingLogo, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-            TextColor3 = Color3.fromRGB(0, 220, 255)
-        }):Play()
-        task.wait(1)
-        TweenService:Create(loadingLogo, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-            TextColor3 = Color3.fromRGB(0, 170, 255)
-        }):Play()
-        task.wait(1)
-    end
-end)
-
-local loadSteps = {
-    { pct = 12, text = "Initializing environment..." },
-    { pct = 25, text = "Loading executor libraries..." },
-    { pct = 40, text = "Connecting to key server..." },
-    { pct = 55, text = "Building interface..." },
-    { pct = 70, text = "Loading modules..." },
-    { pct = 85, text = "Starting engine..." },
-    { pct = 100, text = "Ready." },
-}
-
-local function setLoadProgress(pct, txt)
-    TweenService:Create(loadingBarFill, TweenInfo.new(0.4, Enum.EasingStyle.Quad), {
-        Size = UDim2.new(pct / 100, 0, 1, 0)
-    }):Play()
-    loadingPct.Text = pct .. "%"
-    if txt then loadingStatus.Text = txt end
-end
-
-local loadingFinished = false
-local function finishLoading()
-    if loadingFinished then return end
-    loadingFinished = true
-    local fadeTween = TweenService:Create(loadingBg, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
-        BackgroundTransparency = 1
-    })
-    for _, obj in ipairs(loadingBg:GetDescendants()) do
-        if obj:IsA("TextLabel") or obj:IsA("TextButton") then
-            TweenService:Create(obj, TweenInfo.new(0.5), { TextTransparency = 1, BackgroundTransparency = 1 }):Play()
-        elseif obj:IsA("Frame") and obj ~= loadingBg then
-            TweenService:Create(obj, TweenInfo.new(0.5), { BackgroundTransparency = 1 }):Play()
-        elseif obj:IsA("UIStroke") then
-            TweenService:Create(obj, TweenInfo.new(0.5), { Transparency = 1 }):Play()
-        end
-    end
-    fadeTween:Play()
-    task.wait(0.7)
-    if loadingGui then pcall(function() loadingGui:Destroy() end) end
-end
-
-task.spawn(function()
-    for _, step in ipairs(loadSteps) do
-        if skipRequested then break end
-        setLoadProgress(step.pct, step.text)
-        task.wait(0.35)
-    end
-    task.wait(0.3)
-    finishLoading()
-end)
-
--- ==================== REDSTONEGUARD ====================
-local PROJECT_NAME = "QWERTY-HUB-LONE"
-local REDSTONE_SCRIPT_ID = "d480eb43-0231-478c-8fb1-52274f6df97a"
-local REDSTONE_API_KEY   = "rg_live_2dbe258f55f02d03fa92cebc1249122833bff51b6e1f0b30"
-local CHECKPOINT_LINK    = "https://redstoneguard.xyz/key-system/d480eb43-0231-478c-8fb1-52274f6df97a"
-
-getgenv().QWERTY_KEY_VERIFIED = false
-
-local SDK
-do
-    local ok, result = pcall(function()
-        return loadstring(game:HttpGet("https://redstoneguard.xyz/redstoneguard-sdk.lua"))()
-    end)
-    if ok and type(result) == "table" then
-        SDK = result
-        pcall(SDK.init, {
-            scriptId = REDSTONE_SCRIPT_ID,
-            apiKey   = REDSTONE_API_KEY,
-        })
-    end
-end
 
 -- ==================== THEME ====================
 local THEME = {
@@ -355,7 +100,6 @@ local State = {
     Chams = false, ChamsFillColor = Color3.fromRGB(255, 60, 120), ChamsOutlineColor = Color3.new(1,1,1),
     SkeletonESP = false, SkeletonColor = Color3.fromRGB(255, 220, 120),
     Tracer = false, TracerColor = Color3.fromRGB(0, 200, 255), TracerThickness = 1.5,
-    TracerMaxDistance = 500,
 }
 
 -- ==================== NOTIFICATIONS ====================
@@ -405,76 +149,6 @@ local function notify(title, text, color, dur)
     task.delay(dur, function() f:Destroy() end)
 end
 
--- ==================== KEY GUI ====================
-local keyGui = Instance.new("ScreenGui")
-keyGui.Name = "KeyInputGui"
-keyGui.ResetOnSpawn = false
-keyGui.IgnoreGuiInset = true
-keyGui.DisplayOrder = 150
-keyGui.Parent = PlayerGui
-
-local keyFrame = Instance.new("Frame")
-keyFrame.Size = UDim2.fromOffset(420, 130)
-keyFrame.Position = UDim2.new(0.5, -210, 0.5, -65)
-keyFrame.BackgroundColor3 = THEME.Background
-keyFrame.BorderSizePixel = 0
-keyFrame.Active = true
-keyFrame.Draggable = true
-keyFrame.Visible = false
-keyFrame.ZIndex = 50
-keyFrame.Parent = keyGui
-Instance.new("UICorner", keyFrame).CornerRadius = UDim.new(0, 10)
-Instance.new("UIStroke", keyFrame).Color = THEME.Accent
-
-local keyTextBox = Instance.new("TextBox")
-keyTextBox.Size = UDim2.new(1, -24, 0, 40)
-keyTextBox.Position = UDim2.fromOffset(12, 14)
-keyTextBox.PlaceholderText = "Paste your key here..."
-keyTextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-keyTextBox.TextColor3 = Color3.new(1, 1, 1)
-keyTextBox.PlaceholderColor3 = Color3.fromRGB(140, 140, 150)
-keyTextBox.Font = Enum.Font.Gotham
-keyTextBox.TextSize = 14
-keyTextBox.BorderSizePixel = 0
-keyTextBox.ClearTextOnFocus = false
-keyTextBox.Text = ""
-keyTextBox.Parent = keyFrame
-Instance.new("UICorner", keyTextBox).CornerRadius = UDim.new(0, 6)
-
-local copyBtn = Instance.new("TextButton")
-copyBtn.Size = UDim2.new(0.5, -18, 0, 40)
-copyBtn.Position = UDim2.fromOffset(12, 66)
-copyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 42)
-copyBtn.Text = "Copy Key Link"
-copyBtn.TextColor3 = THEME.Text
-copyBtn.Font = Enum.Font.GothamBold
-copyBtn.TextSize = 12
-copyBtn.BorderSizePixel = 0
-copyBtn.Parent = keyFrame
-Instance.new("UICorner", copyBtn).CornerRadius = UDim.new(0, 6)
-
-local applyBtn = Instance.new("TextButton")
-applyBtn.Size = UDim2.new(0.5, -18, 0, 40)
-applyBtn.Position = UDim2.new(0.5, 6, 0, 66)
-applyBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 75)
-applyBtn.Text = "Apply"
-applyBtn.TextColor3 = Color3.new(1, 1, 1)
-applyBtn.Font = Enum.Font.GothamBold
-applyBtn.TextSize = 13
-applyBtn.BorderSizePixel = 0
-applyBtn.Parent = keyFrame
-Instance.new("UICorner", applyBtn).CornerRadius = UDim.new(0, 6)
-
-copyBtn.MouseButton1Click:Connect(function()
-    if setclipboard then pcall(setclipboard, CHECKPOINT_LINK) end
-    copyBtn.Text = "Copied!"
-    copyBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 60)
-    task.delay(1.5, function()
-        copyBtn.Text = "Copy Key Link"
-        copyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 42)
-    end)
-end)
-
 -- ==================== CHARACTER ====================
 local Character, Humanoid, RootPart
 local function onChar(char)
@@ -519,7 +193,7 @@ local mainTitle = Instance.new("TextLabel")
 mainTitle.Size = UDim2.new(1, -160, 1, 0)
 mainTitle.Position = UDim2.new(0, 15, 0, 0)
 mainTitle.BackgroundTransparency = 1
-mainTitle.Text = "QWERTY-HUB | Lone Survival v6.5"
+mainTitle.Text = "QWERTY-HUB | Lone Survival v6.6"
 mainTitle.TextColor3 = Color3.new(1, 1, 1)
 mainTitle.TextSize = 15
 mainTitle.Font = Enum.Font.GothamBold
@@ -841,7 +515,7 @@ watermark.BackgroundTransparency = 0.3
 watermark.TextColor3 = THEME.Accent
 watermark.Font = Enum.Font.GothamBold
 watermark.TextSize = 12
-watermark.Text = "QWERTY-HUB v6.5 | FPS: --"
+watermark.Text = "QWERTY-HUB v6.6 | FPS: --"
 watermark.BorderSizePixel = 0
 watermark.ZIndex = 20
 watermark.Parent = screenGui
@@ -1432,7 +1106,8 @@ local function silentFindTarget()
                             bestPart, bestChar, bestPlayer, bestDist = part, char, plr, mag
                         end
                     end
-                end            end
+                end
+            end
         end
     end
 
@@ -1790,8 +1465,6 @@ pickerApply.MouseButton1Click:Connect(applyKeybind)
 -- ==================== INPUT ====================
 UserInputService.InputBegan:Connect(function(input, gp)
     if gp then return end
-    if not getgenv().QWERTY_KEY_VERIFIED then return end
-
     if input.KeyCode == Enum.KeyCode.Insert or input.KeyCode == Enum.KeyCode.RightShift then
         mainFrame.Visible = not mainFrame.Visible
     end
@@ -1819,7 +1492,6 @@ UserInputService.InputBegan:Connect(function(input, gp)
 end)
 
 UserInputService.InputEnded:Connect(function(input)
-    if not getgenv().QWERTY_KEY_VERIFIED then return end
     if input.KeyCode == State.AimbotKey then aimbotActive = false end
     if input.KeyCode == State.ZoomKey then
         State.Zoom = false
@@ -1834,14 +1506,12 @@ local textTimer, TEXT_INTERVAL = 0, 0.15
 local silentTimer, SILENT_REFRESH = 0, 1/60
 
 RunService.RenderStepped:Connect(function(dt)
-    if not getgenv().QWERTY_KEY_VERIFIED then return end
-
     fpsCount = fpsCount + 1
     fpsTimer = fpsTimer + dt
     if fpsTimer >= 1 then lastFps = fpsCount; fpsCount = 0; fpsTimer = 0 end
     if State.Watermark then
         watermark.Visible = true
-        watermark.Text = string.format("QWERTY-HUB v6.5 | FPS: %d", lastFps)
+        watermark.Text = string.format("QWERTY-HUB v6.6 | FPS: %d", lastFps)
     else watermark.Visible = false end
     keybindList.Visible = State.KeybindList
     if State.KeybindList then refreshKeybindList() end
@@ -2027,29 +1697,24 @@ RunService.RenderStepped:Connect(function(dt)
                 if hum and hum.Health > 0 then
                     local head = plr.Character:FindFirstChild("Head")
                     if head then
-                        local dist = (head.Position - RootPart.Position).Magnitude
-                        if dist <= State.TracerMaxDistance then
-                            if not drawTracers[plr] then
-                                local line = Drawing.new("Line")
-                                line.Thickness = State.TracerThickness
-                                line.Transparency = 1
-                                line.Color = State.TracerColor
-                                line.Visible = false
-                                drawTracers[plr] = line
-                            end
-                            local sp = Camera:WorldToViewportPoint(head.Position)
-                            local line = drawTracers[plr]
-                            if sp.Z > 0 and originScreen.Z > 0 then
-                                line.From = originVec
-                                line.To = Vector2.new(sp.X, sp.Y)
-                                line.Color = State.TracerColor
-                                line.Thickness = State.TracerThickness
-                                line.Visible = true
-                            else
-                                line.Visible = false
-                            end
+                        if not drawTracers[plr] then
+                            local line = Drawing.new("Line")
+                            line.Thickness = State.TracerThickness
+                            line.Transparency = 1
+                            line.Color = State.TracerColor
+                            line.Visible = false
+                            drawTracers[plr] = line
+                        end
+                        local sp = Camera:WorldToViewportPoint(head.Position)
+                        local line = drawTracers[plr]
+                        if sp.Z > 0 and originScreen.Z > 0 then
+                            line.From = originVec
+                            line.To = Vector2.new(sp.X, sp.Y)
+                            line.Color = State.TracerColor
+                            line.Thickness = State.TracerThickness
+                            line.Visible = true
                         else
-                            if drawTracers[plr] then drawTracers[plr].Visible = false end
+                            line.Visible = false
                         end
                     end
                 else
@@ -2274,7 +1939,9 @@ tabs["Visual"] = function()
     createToggle("Tracer", "Tracer", function(v)
         if not v then clearDrawingTracers() end
     end)
-    createSlider("Tracer Max Distance", "TracerMaxDistance", 50, 2000, 10)
+    createButton("Cycle Tracer Color", function()
+        State.TracerColor = Color3.fromHSV(math.random(), 1, 1)
+    end)
     createSection("Limits")
     createSlider("Max ESP Distance", "ESP_MaxDistance", 50, 2000, 1)
     createSection("X-Ray")
@@ -2378,7 +2045,7 @@ tabs["Settings"] = function()
     createToggle("Anti-Kick", "AntiKick", function(v) if v then enableAntiKick() end end)
     createSection("Key System")
     createButton("Reset Saved Key", function()
-        if SDK and SDK.clearKey then pcall(SDK.clearKey, PROJECT_NAME) end
+        if setclipboard then end
         notify("Key", "Cleared. Restart script.", Color3.fromRGB(255,160,80), 3)
     end)
     createSection("Danger Zone")
@@ -2422,69 +2089,7 @@ end)
 
 refreshKeybindList()
 
--- ==================== KEY CHECK ====================
-local savedKey = nil
-local valid = false
+getgenv().QWERTY_KEY_VERIFIED = true
+mainFrame.Visible = true
 
-if SDK and SDK.loadKey then
-    local ok, k = pcall(SDK.loadKey, PROJECT_NAME)
-    if ok then savedKey = k end
-end
-
-if savedKey and SDK and SDK.verifyKey then
-    local ok, result = pcall(SDK.verifyKey, savedKey)
-    if ok and result and result.valid then
-        valid = true
-    else
-        pcall(SDK.clearKey, PROJECT_NAME)
-        savedKey = nil
-    end
-end
-
-if valid then
-    getgenv().QWERTY_KEY_VERIFIED = true
-    keyFrame.Visible = false
-    mainFrame.Visible = true
-    notify("Auth", "Welcome back", Color3.fromRGB(0,200,120), 2)
-else
-    getgenv().QWERTY_KEY_VERIFIED = false
-    keyFrame.Visible = true
-    mainFrame.Visible = false
-
-    applyBtn.MouseButton1Click:Connect(function()
-        local entered = keyTextBox.Text:gsub("%s", "")
-        if entered == "" then return end
-        applyBtn.Text = "Checking..."
-        applyBtn.BackgroundColor3 = Color3.fromRGB(120, 120, 40)
-
-        if not (SDK and SDK.verifyKey) then
-            keyTextBox.Text = ""
-            keyTextBox.PlaceholderText = "SDK unavailable"
-            applyBtn.Text = "Apply"
-            applyBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 75)
-            return
-        end
-
-        local ok, result = pcall(SDK.verifyKey, entered)
-        if ok and result and result.valid then
-            pcall(SDK.saveKey, PROJECT_NAME, entered)
-            getgenv().QWERTY_KEY_VERIFIED = true
-            keyFrame.Visible = false
-            mainFrame.Visible = true
-            notify("Auth", "Key verified", Color3.fromRGB(0,200,120), 2)
-        else
-            local err = (result and result.reason) or "unknown"
-            keyTextBox.Text = ""
-            keyTextBox.PlaceholderText = "Invalid key (" .. err .. ")"
-            applyBtn.Text = "Apply"
-            applyBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 75)
-        end
-    end)
-end
-
-if IS_XENO then
-    print("[QWERTY-HUB] v6.5 loaded. Silent Aim DISABLED (Xeno). Executor: " .. EXECUTOR_NAME)
-else
-    print("[QWERTY-HUB] v6.5 loaded. Executor: " .. EXECUTOR_NAME)
-end
-print("[QWERTY-HUB] Key system: RedstoneGuard (" .. PROJECT_NAME .. ")")
+print("[QWERTY-HUB] v6.6 Hub loaded. Executor: " .. EXECUTOR_NAME)
